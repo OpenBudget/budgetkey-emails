@@ -1,0 +1,23 @@
+.idea
+.iml
+node_modules
+jspm_packages
+npm-debug.*
+link-checker-results.txt
+app/**/*.js
+*.js.map
+e2e/**/*.js
+e2e/**/*.js.map
+_test-output
+_temp
+dist/
+.sass-cache/
+
+# Vim temp files
+**/*.swp
+.budgetkey-ng2-components
+
+.vscode
+
+out/
+data/

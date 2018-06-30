@@ -1,0 +1,28 @@
+{
+  "name": "budgetkey-emails",
+  "version": "0.0.1",
+  "description": "Email templates for BudgetKey",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenBudget/budgetkey-emails.git"
+  },
+  "author": "Adam Kariv <adam.kariv@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OpenBudget/budgetkey-emails/issues"
+  },
+  "homepage": "https://github.com/OpenBudget/budgetkey-emails#readme",
+  "dependencies": {
+    "aws-sdk": "^2.263.1",
+    "express": "^4.16.3",
+    "inline-css": "^2.4.0",
+    "mailgun-js": "^0.18.1",
+    "node-watch": "^0.5.8",
+    "nunjucks": "^3.1.3"
+  }
+}

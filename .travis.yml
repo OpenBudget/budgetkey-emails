@@ -1,0 +1,44 @@
+dist: trusty
+sudo: required
+language: node_js
+node_js:
+  - "8"
+os:
+  - linux
+env:
+  global:
+    - DBUS_SESSION_BUS_ADDRESS=/dev/null
+    - DISPLAY=:99.0
+    - CHROME_BIN=chromium-browser
+    - K8S_OPS_REPO_BRANCH=master
+    - K8S_OPS_REPO_SLUG=OpenBudget/budgetkey-k8s
+    - DOCKER_IMAGE=budgetkey/budgetkey-emails
+    - DEPLOY_YAML_UPDATE_FILE=values.auto-updated.yaml
+    - DEPLOY_VALUES_CHART_NAME=emails
+    - DEPLOY_VALUES_IMAGE_PROP=image
+    - DEPLOY_COMMIT_MESSAGE="automatic update of budgetkey-emails"
+    - DEPLOY_GIT_EMAIL=budgetkey-deployer@null.void
+    - DEPLOY_GIT_USER=budgetkey-deployer
+services:
+  - docker
+before_install:
+  - curl -s https://raw.githubusercontent.com/OpenBudget/budgetkey-k8s/master/apps_travis_script.sh > .travis.sh
+  - bash .travis.sh script
+before_script:
+  - sh -e /etc/init.d/xvfb start
+install:
+  - npm install
+  - webdriver-manager update
+script:
+  - npm run lint
+  - npm run test
+  - npm run e2e
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: bash .travis.sh deploy
+  on:
+    branch: master
+
+
+

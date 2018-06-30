@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head>
+<style type="text/css">
+body{
+  background-color: #F5F6F6;
+  direction: rtl;
+}
+
+.logo {
+  width: 80px; margin-bottom: 40px;
+}
+
+.hero {
+  background-color: #fff;
+  padding: 20px 30px;
+  max-width: 640px;
+  margin-bottom: 50px;
+}
+
+.section{
+  text-align: right;
+}
+
+.section a {
+  display: block;
+}
+
+.section .item {
+  margin: 20px 0;
+}
+
+.section .items {
+  margin-bottom: 50px;
+}
+
+.section .terms {
+  margin-bottom: 20px;
+}
+
+a {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+img { max-width: 640px; }
+</style>
+</head>
+<body>
+<center>
+  <a href='https://next.obudget.org'>
+    <img src="http://next.obudget.org/assets/img/obudget_key@2x.png" class="logo">
+  </a>
+  <div class="hero">
+    {% for section in sections %}
+    <div class="section">
+      <img src="{{section.img}}">
+      <div class='terms'>
+        {% for term in section.terms %}
+          <a href="{{term.query_url}}">
+            <img src="{{term.img}}">
+          </a>
+          <div class='items'>
+            {% for item in term.items %}
+              <a class="item" href="https://next.obudget.org/i/{{item.doc_id}}">
+                <img src="{{item.img}}">
+              </a>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <a class="footer" href="https://next.obudget.org/p/">
+    <img src="{{footer}}">
+  </a>
+</center>
+</body>
