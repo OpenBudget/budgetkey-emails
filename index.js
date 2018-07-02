@@ -238,6 +238,7 @@ getBrowser()
     app.set('port', process.env.PORT || 8000);
 
     app.post('/', function(req, res) {
+        req.setTimeout(300000);
         savedSearches(req.body)
             .then((send_result) => {
                 res.send({result: send_result});
