@@ -180,8 +180,8 @@ async function prerenderItems(context) {
             }    
         }
     }
-    if (!data.footer) {
-        await fetchTemplateImage('partials/footer.html', data, 'footer');
+    if (!context.data.footer) {
+        await fetchTemplateImage('partials/footer.html', context.data, 'footer');
     }
     return context;
 }
