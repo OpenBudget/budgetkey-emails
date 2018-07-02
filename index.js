@@ -59,7 +59,7 @@ var sender = mailgun({
     domain: 'obudget.org'
 });
 async function sendEmail(context) {
-    if (context.data.section.length > 0) {
+    if (context.data.sections.length > 0) {
         var email = {
             from: 'אדם מ״מפתח התקציב״ <adam@obudget.org>',
             to: context.data.email,
@@ -217,52 +217,20 @@ async function filterSections(context) {
 }
 
 async function savedSearches(data) {
-    let ret = await
-        readFile('templates/saved-searches.html')
-            .then((template) => inlineCss(template, { url: 'https://next.obudget.org/'}))
-            .then((template) => prerenderItems({template, data}))
-            .then((context) => renderTemplate(context))
-            .then((context) => filterSections(context))
-            .then((context) => sendEmail(context));
-    return ret;
+    try {
+        return await
+            readFile('templates/saved-searches.html')
+                .then((template) => inlineCss(template, { url: 'https://next.obudget.org/'}))
+                .then((template) => prerenderItems({template, data}))
+                .then((context) => renderTemplate(context))
+                .then((context) => filterSections(context))
+                .then((context) => sendEmail(context));
+    } catch (e) {
+        return {result: {message: 'Error while sending: ' + e}}
+    }
 }
 
 /**** MAIN ****/
-
-let data = {
-    "sections": [
-        {
-            "header": "מכרזים שנסגרים השבוע",
-            "subheader": "הזדמנות אחרונה להגיש הצעות ל-5 מכרזים",
-            "terms": [
-                {
-                    "term": "חלמיש",
-                    "query_url": "https://next.obudget.org/s/?q=%D7%93%D7%99%D7%95%D7%A8%20%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&range=all&dd=all"
-                },
-                {
-                    "term": "עגבניות שרי",
-                    "query_url": "https://next.obudget.org/s/?q=%D7%9E%D7%97%D7%A9%D7%91%D7%99%D7%9D&range=all&dd=tenders,contract-spending"
-                }
-            ]
-        },
-        {
-            "header": "מכרזים חדשים",
-            "subheader": "סכום כולל של 23,234,000 ₪ ב-3 מכרזים חדשים שעשויים לעניין אותך",
-            "terms": [
-                {
-                    "term": "עגבניות שרי",
-                    "query_url": "https://next.obudget.org/s/?q=%D7%9E%D7%97%D7%A9%D7%91%D7%99%D7%9D&range=all&dd=tenders,contract-spending"
-                },
-                {
-                    "term": "חלמיש",
-                    "query_url": "https://next.obudget.org/s/?q=%D7%93%D7%99%D7%95%D7%A8%20%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&range=all&dd=all"
-                }
-            ]
-        }
-    ]
-};
-
-
 getBrowser()
 .then(() => {
     const app = express();
@@ -270,7 +238,6 @@ getBrowser()
     app.set('port', process.env.PORT || 8000);
 
     app.post('/', function(req, res) {
-        console.log(req.body);      // your JSON
         savedSearches(req.body)
             .then((send_result) => {
                 res.send({result: send_result});
@@ -280,6 +247,4 @@ getBrowser()
     app.listen(app.get('port'), function() {
         console.log('Listening port ' + app.get('port'));
     });
-      
-    // processAllTemplates();
 });
