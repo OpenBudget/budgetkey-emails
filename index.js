@@ -203,11 +203,11 @@ async function filterSections(context) {
     for (let section of context.data.sections) {
         let terms = [];
         for (let term of section.terms) {
-            if (term.items) {
+            if (term.items && term.items.length > 0) {
                 terms.push(term);
             }
         }
-        if (terms) {
+        if (terms.length > 0) {
             section.terms = terms;
             sections.push(section);
         }
