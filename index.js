@@ -222,8 +222,8 @@ async function savedSearches(data) {
             readFile('templates/saved-searches.html')
                 .then((template) => inlineCss(template, { url: 'https://next.obudget.org/'}))
                 .then((template) => prerenderItems({template, data}))
-                .then((context) => renderTemplate(context))
                 .then((context) => filterSections(context))
+                .then((context) => renderTemplate(context))
                 .then((context) => sendEmail(context));
     } catch (e) {
         return {result: {message: 'Error while sending: ' + e}}
