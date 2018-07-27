@@ -18,7 +18,7 @@ async function getBrowser() {
         console.log('Launched browser')
         const browser = await puppeteer.launch({
             headless: true,
-            timeout: 100000,
+            timeout: 3600000,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
         browserWSEndpoint = await browser.wsEndpoint();
@@ -100,6 +100,7 @@ async function renderTemplate(context) {
 async function fetchItemImages(section) {
     const browser = await getBrowser();
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(180000);
     let url = section.query_url;
     console.log('Fetching data for', url)
 
