@@ -23,7 +23,14 @@ async function getBrowser() {
         });
         browserWSEndpoint = await browser.wsEndpoint();
     }
-    return puppeteer.connect({browserWSEndpoint});
+    return puppeteer.connect({browserWSEndpoint})
+        .then((browser) => {
+            return browser;
+        })
+        .catch((e) => {
+            browserWSEndpoint = null;
+            return getBrowser();
+        });
 }
 
 var s3 = new AWS.S3({
@@ -248,4 +255,8 @@ getBrowser()
     app.listen(app.get('port'), function() {
         console.log('Listening port ' + app.get('port'));
     });
+})
+.catch((e) => {
+    console.error(e);
+    process.exit(1);
 });
