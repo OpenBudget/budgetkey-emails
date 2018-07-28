@@ -234,6 +234,7 @@ async function savedSearches(data) {
                 .then((context) => renderTemplate(context))
                 .then((context) => sendEmail(context));
     } catch (e) {
+        console.error('Error while sending', e);
         return {result: {message: 'Error while sending: ' + e}}
     }
 }
