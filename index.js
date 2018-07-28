@@ -109,6 +109,8 @@ async function fetchItemImages(section) {
     });
     await page.waitFor(2000);
   
+    console.log('> Getting screenshots...');
+
     let items = await page.evaluate(() => 
         [...document.querySelectorAll('.single-result')]
             .slice(0, 3)
@@ -145,6 +147,7 @@ async function fetchItemImages(section) {
     section.items = items.map((item, i) => {
         return Object.assign({img: images[i]}, item);
     });
+    console.log('> Got', items.length, 'items!');
     return section;
 }
 
