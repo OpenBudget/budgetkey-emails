@@ -109,7 +109,7 @@ async function fetchItemImages(section) {
     });
     await page.waitFor(2000);
   
-    console.log('> Getting screenshots...');
+    console.log('> Getting elements...');
 
     let items = await page.evaluate(() => 
         [...document.querySelectorAll('.single-result')]
@@ -132,6 +132,8 @@ async function fetchItemImages(section) {
                 };
             })
     );
+    console.log('> Got', items.length, 'items!');
+    console.log('> Getting screenshots...');
     const images = await Promise.all(items
         .map(
             (item) => {
@@ -147,7 +149,7 @@ async function fetchItemImages(section) {
     section.items = items.map((item, i) => {
         return Object.assign({img: images[i]}, item);
     });
-    console.log('> Got', items.length, 'items!');
+    console.log('> Done with', items.length, 'items!');
     return section;
 }
 
