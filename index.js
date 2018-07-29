@@ -66,7 +66,9 @@ var sender = mailgun({
     domain: 'obudget.org'
 });
 async function sendEmail(context) {
+    console.log(' > sendEmail');
     if (context.data.sections.length > 0) {
+        console.log('  > got ' + context.data.sections.length + 'sections');
         var email = {
             from: 'אדם מ״מפתח התקציב״ <adam@obudget.org>',
             to: context.data.email,
@@ -80,12 +82,14 @@ async function sendEmail(context) {
             });            
         })    
     } else {
+        console.log('  > nothing to send...');
         return {result: {message: 'Nothing to send, skipping'}}
     }
 }
 
 
 async function renderTemplate(context) {
+    console.log(' > renderTemplate');
     try {
         context.rendered = nunjucks.renderString(context.template, context.data);
         return context;
@@ -98,18 +102,19 @@ async function renderTemplate(context) {
 
 
 async function fetchItemImages(section) {
+    console.log('  > fetchItemImages');
     const browser = await getBrowser();
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(180000);
     let url = section.query_url;
-    console.log('Fetching data for', url)
+    console.log('   > Fetching data for', url)
 
     await page.goto(url, {
         waitUntil: 'networkidle0'
     });
     await page.waitFor(2000);
   
-    console.log('> Getting elements...');
+    console.log('   > Getting elements...');
 
     let items = await page.evaluate(() => 
         [...document.querySelectorAll('.single-result')]
@@ -132,8 +137,8 @@ async function fetchItemImages(section) {
                 };
             })
     );
-    console.log('> Got', items.length, 'items!');
-    console.log('> Getting screenshots...');
+    console.log('   > Got', items.length, 'items!');
+    console.log('   > Getting screenshots...');
     const images = await Promise.all(items
         .map(
             (item) => {
@@ -149,12 +154,13 @@ async function fetchItemImages(section) {
     section.items = items.map((item, i) => {
         return Object.assign({img: images[i]}, item);
     });
-    console.log('> Done with', items.length, 'items!');
+    console.log('   > Done with', items.length, 'items!');
     return section;
 }
 
 
 async function fetchTemplateImage(template_fn, data, key) {
+    console.log('  > fetchTemplateImage', template_fn, key);
     let template = await readFile(template_fn);
 
     const browser = await getBrowser();
@@ -174,12 +180,15 @@ async function fetchTemplateImage(template_fn, data, key) {
     );
     rect = rect[0];
     const image = await page.screenshot({type: 'png', clip: rect});
+    console.log('   > fetchTemplateImage storing to S3');
     const url = await storeImageToS3(image);
     data[key] = url;
+    console.log('   > fetchTemplateImage done');
 }
 
 
 async function prerenderItems(context) {
+    console.log(' > prerenderItems');
     for (let section of context.data.sections) {
         if (!section.img) {
             await fetchTemplateImage('partials/header.html', section, 'img');
@@ -212,6 +221,7 @@ function readFile(filename) {
 }
 
 async function filterSections(context) {
+    console.log(' > filterSections');
     let sections = [];
     for (let section of context.data.sections) {
         let terms = [];
@@ -252,10 +262,15 @@ getBrowser()
     app.set('port', process.env.PORT || 8000);
 
     app.post('/', function(req, res) {
+        console.log('* Processing request', req.body);
         req.setTimeout(300000);
         savedSearches(req.body)
             .then((send_result) => {
                 res.send({result: send_result});
+            })
+            .catch((e) => {
+                console.error('Error in handler', e);
+                res.send({result: 'Error in handler: ' + e});
             });
     });
 
