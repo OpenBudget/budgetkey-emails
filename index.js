@@ -153,6 +153,7 @@ async function fetchItemImages(section) {
     section.items = items.map((item, i) => {
         return Object.assign({img: images[i]}, item);
     });
+    await page.close();
     console.log('   > Done with', items.length, 'items!');
     return section;
 }
@@ -182,6 +183,7 @@ async function fetchTemplateImage(template_fn, data, key) {
     console.log('   > fetchTemplateImage storing to S3');
     const url = await storeImageToS3(image);
     data[key] = url;
+    await page.close();
     console.log('   > fetchTemplateImage done');
 }
 
