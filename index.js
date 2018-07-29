@@ -11,26 +11,25 @@ let AWS = require('aws-sdk');
 let express = require('express');
 
 
-let browserWSEndpoint = null;
+let browserInstance= null;
 
 async function getBrowser() {
-    if (!browserWSEndpoint) {
+    if (!browserInstance) {
         console.log('Launched browser')
         const browser = await puppeteer.launch({
             headless: true,
-            timeout: 3600000,
+            timeout: 0,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
-        browserWSEndpoint = await browser.wsEndpoint();
+        const browserWSEndpoint = await browser.wsEndpoint();
+        return puppeteer.connect({browserWSEndpoint})
+            .then((connection) => {
+                browserInstance = connection;
+                return browserInstance;
+            });
+    } else {
+        return browserInstance;
     }
-    return puppeteer.connect({browserWSEndpoint})
-        .then((browser) => {
-            return browser;
-        })
-        .catch((e) => {
-            browserWSEndpoint = null;
-            return getBrowser();
-        });
 }
 
 var s3 = new AWS.S3({
