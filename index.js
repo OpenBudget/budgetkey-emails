@@ -138,6 +138,16 @@ async function fetchItemImages(section) {
             })
     );
     console.log('   > Got', items.length, 'items!');
+    let itemCount = await page.evaluate(() => 
+        parseInt(
+            document.querySelector('.type-text-in-search-bar-right span')
+            .textContent
+            .replace('(','')
+            .replace(')','')
+            .replace(',','')
+        )
+    );
+    console.log('   > Total results count is', itemCount); 
     console.log('   > Getting screenshots...');
     const images = await Promise.all(items
         .map(
@@ -154,6 +164,7 @@ async function fetchItemImages(section) {
     section.items = items.map((item, i) => {
         return Object.assign({img: images[i]}, item);
     });
+    section.itemCount = itemCount;
     await page.close();
     console.log('   > Done with', items.length, 'items!');
     return section;
@@ -191,6 +202,7 @@ async function fetchTemplateImage(template_fn, data, key) {
 
 async function prerenderItems(context) {
     console.log(' > prerenderItems');
+    await fetchTemplateImage('partials/edit.html', context.data, 'edit_img');
     for (let section of context.data.sections) {
         if (!section.img) {
             await fetchTemplateImage('partials/header.html', section, 'img');

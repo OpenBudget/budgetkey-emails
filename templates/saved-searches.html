@@ -22,7 +22,7 @@ body{
 }
 
 .section a {
-  display: block;
+  display: inline-block;
 }
 
 .section .item {
@@ -56,9 +56,14 @@ img { max-width: 640px; }
       <img src="{{section.img}}">
       <div class='terms'>
         {% for term in section.terms %}
-          <a href="{{term.query_url}}">
-            <img src="{{term.img}}">
-          </a>
+          <div>
+            <a href="{{term.query_url}}">
+              <img src="{{term.img}}">
+            </a>
+            <a href="https://next.obudget.org/p/">
+              <img src="{{edit_img}}">
+            </a>
+          </div>
           <div class='items'>
             {% for item in term.items %}
               <a class="item" href="https://next.obudget.org/i/{{item.doc_id}}">
