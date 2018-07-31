@@ -87,7 +87,9 @@ img { max-width: 640px; }
           </div>
           {% if term.itemCount >= 3 %}
             <div class='item-count'>
-              <a href="{{term.query_url}}">{{term.itemCount - 3}} עדכונים נוספים &larr;</a>
+              <a href="{{term.query_url}}">
+                <img src="{{term.itemCountImg}}">
+              </a>
             </div>
           {% endif %}
         {% endfor %}

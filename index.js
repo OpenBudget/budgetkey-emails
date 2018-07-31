@@ -213,7 +213,10 @@ async function prerenderItems(context) {
             }
             if (!term.items) {
                 await fetchItemImages(term);
-            }    
+            }
+            if (!term.itemCountImg) {
+                await fetchTemplateImage('partials/item-count.html', term, 'itemCountImg');
+            }
         }
     }
     if (!context.data.footer) {
