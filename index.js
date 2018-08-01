@@ -112,7 +112,10 @@ async function fetchItemImages(section) {
         waitUntil: 'networkidle0'
     });
     await page.waitFor(2000);
-    await page.addStyleTag({content: 'em { background: inherit !important; }'});
+    await page.addStyleTag({content: `
+    em { background: inherit !important; }
+    #web-messenger-container { display: none; }
+`});
   
     console.log('   > Getting elements...');
 
