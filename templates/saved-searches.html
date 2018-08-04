@@ -85,7 +85,7 @@ img { max-width: 640px; }
               </a>
             {% endfor %}
           </div>
-          {% if term.itemCount >= 3 %}
+          {% if term.itemCount > 3 %}
             <div class='item-count'>
               <a href="{{term.query_url}}">
                 <img src="{{term.itemCountImg}}">
