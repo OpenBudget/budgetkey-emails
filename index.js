@@ -40,10 +40,19 @@ var s3 = new AWS.S3({
     }
 });
 
+function storeToFile(filename, data) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filename, data, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(filename);
+            }
+        });
+    });
+}
 
-function storeImageToS3(data) {
-    let hash = crypto.createHash('md5').update(data).digest("hex");
-    let filename = hash + '.png';
+function storeImageToS3(filename, data) {
     let fullpath = 'https://ams3.digitaloceanspaces.com/budgetkey-emails/' + filename;
     var params = {
         Body: data,
@@ -59,30 +68,48 @@ function storeImageToS3(data) {
     });
 }
 
+function storeImage(context, data) {
+    let hash = crypto.createHash('md5').update(data).digest("hex");
+    let filename = hash + '.png';
+    if (context.debug) {
+        return storeToFile('/tmp/' + filename, data);
+    } else {
+        return storeImageToS3(filename, data);
+    }
+}
 
-var sender = mailgun({
-    apiKey: process.env['MAILGUN_API_KEY'], 
-    domain: 'obudget.org'
-});
+
+const mailgunApiKey = process.env['MAILGUN_API_KEY'];
+let sender = null;
+if (mailgunApiKey) {
+    sender = mailgun({
+        apiKey: mailgunApiKey, 
+        domain: 'obudget.org'
+    });
+}
 async function sendEmail(context) {
     console.log(' > sendEmail');
-    if (context.data.sections.length > 0) {
-        console.log('  > got ' + context.data.sections.length + 'sections');
-        var email = {
-            from: 'אדם מ״מפתח התקציב״ <adam@obudget.org>',
-            to: context.data.email,
-            subject: 'עדכונים עבורך מ״מפתח התקציב״',
-            html: context.rendered
-        };
-        return new Promise((resolve) => {
-            sender.messages().send(email, function (error, body) {            
-                console.log('MAILGUN:', body);
-                resolve(body);
-            });            
-        })    
+    if (!context.debug) {
+        if (context.sections.length > 0) {
+            console.log('  > got ' + context.sections.length + 'sections');
+            var email = {
+                from: 'אדם מ״מפתח התקציב״ <adam@obudget.org>',
+                to: context.email,
+                subject: 'עדכונים עבורך מ״מפתח התקציב״',
+                html: context.rendered
+            };
+            return new Promise((resolve) => {
+                sender.messages().send(email, function (error, body) {            
+                    console.log('MAILGUN:', body);
+                    resolve(body);
+                });            
+            })    
+        } else {
+            console.log('  > nothing to send...');
+            return {result: {message: 'Nothing to send, skipping'}}
+        }
     } else {
-        console.log('  > nothing to send...');
-        return {result: {message: 'Nothing to send, skipping'}}
+        return storeToFile('debug.html', context.rendered);
     }
 }
 
@@ -90,21 +117,23 @@ async function sendEmail(context) {
 async function renderTemplate(context) {
     console.log(' > renderTemplate');
     try {
-        context.rendered = nunjucks.renderString(context.template, context.data);
+        context.JSON = JSON
+        context.rendered = nunjucks.renderString(context.template, context);
         return context;
     } catch(e) {
-        console.log('Error in template ' + outFile + ':');
+        console.log('Error in template :');
         console.log(e.message);
         throw(e);
     }
 }
 
 
-async function fetchItemImages(section) {
+async function fetchItemImages(context, section) {
     console.log('  > fetchItemImages');
     const browser = await getBrowser();
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(180000);
+    await page.setDefaultNavigationTimeout(180000);
+    await page.setViewport({width: 600, height: 2000, deviceScaleFactor: 2});
     let url = section.query_url;
     console.log('   > Fetching data for', url)
 
@@ -159,7 +188,7 @@ async function fetchItemImages(section) {
                     type: 'png', 
                     clip: item.clip
                 }).then((image) => {
-                    return storeImageToS3(image);
+                    return storeImage(context, image);
                 });
             }
         )
@@ -174,12 +203,13 @@ async function fetchItemImages(section) {
 }
 
 
-async function fetchTemplateImage(template_fn, data, key) {
+async function fetchTemplateImage(context, template_fn, data, key) {
     console.log('  > fetchTemplateImage', template_fn, key);
     let template = await readFile(template_fn);
 
     const browser = await getBrowser();
     const page = await browser.newPage();
+    await page.setViewport({width: 1920, height: 1080, deviceScaleFactor: 1});
     await page.setContent(nunjucks.renderString(template, data));
     await page.waitFor('.main');
     await page.waitFor(1000);
@@ -196,7 +226,7 @@ async function fetchTemplateImage(template_fn, data, key) {
     rect = rect[0];
     const image = await page.screenshot({type: 'png', clip: rect});
     console.log('   > fetchTemplateImage storing to S3');
-    const url = await storeImageToS3(image);
+    const url = await storeImage(context, image);
     data[key] = url;
     await page.close();
     console.log('   > fetchTemplateImage done');
@@ -205,25 +235,26 @@ async function fetchTemplateImage(template_fn, data, key) {
 
 async function prerenderItems(context) {
     console.log(' > prerenderItems');
-    await fetchTemplateImage('partials/edit.html', context.data, 'edit_img');
-    for (let section of context.data.sections) {
+    await fetchTemplateImage(context, 'partials/edit.html', context, 'edit_img');
+    await fetchTemplateImage(context, 'partials/arrow-left.html', context, 'arrow_left_img');
+    for (let section of context.sections) {
         if (!section.img) {
-            await fetchTemplateImage('partials/header.html', section, 'img');
+            await fetchTemplateImage(context, 'partials/header.html', section, 'img');
         }
         for (let term of section.terms) {
             if (!term.img) {
-                await fetchTemplateImage('partials/term.html', term, 'img');
+                await fetchTemplateImage(context, 'partials/term.html', term, 'img');
             }
             if (!term.items) {
-                await fetchItemImages(term);
+                await fetchItemImages(context, term);
             }
             if (!term.itemCountImg) {
-                await fetchTemplateImage('partials/item-count.html', term, 'itemCountImg');
+                await fetchTemplateImage(context, 'partials/item-count.html', term, 'itemCountImg');
             }
         }
     }
-    if (!context.data.footer) {
-        await fetchTemplateImage('partials/footer.html', context.data, 'footer');
+    if (!context.footer) {
+        await fetchTemplateImage(context, 'partials/footer.html', context, 'footer');
     }
     return context;
 }
@@ -243,7 +274,7 @@ function readFile(filename) {
 async function filterSections(context) {
     console.log(' > filterSections');
     let sections = [];
-    for (let section of context.data.sections) {
+    for (let section of context.sections) {
         let terms = [];
         for (let term of section.terms) {
             if (term.items && term.items.length > 0) {
@@ -255,16 +286,20 @@ async function filterSections(context) {
             sections.push(section);
         }
     }
-    context.data.sections = sections;
+    context.sections = sections;
     return context;
 }
 
-async function savedSearches(data) {
+async function savedSearches(context) {
     try {
         return await
             readFile('templates/saved-searches.html')
                 .then((template) => inlineCss(template, { url: 'https://next.obudget.org/'}))
-                .then((template) => prerenderItems({template, data}))
+                .then((template) => {
+                    context.template = template;
+                    return context;
+                })
+                .then((context) => prerenderItems(context))
                 .then((context) => filterSections(context))
                 .then((context) => renderTemplate(context))
                 .then((context) => sendEmail(context));
