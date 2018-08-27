@@ -318,7 +318,6 @@ getBrowser()
 
     app.post('/', function(req, res) {
         console.log('* Processing request', req.body);
-        req.setTimeout(300000);
         savedSearches(req.body)
             .then((send_result) => {
                 res.send({result: send_result});
@@ -329,9 +328,10 @@ getBrowser()
             });
     });
 
-    app.listen(app.get('port'), function() {
+    let server = app.listen(app.get('port'), function() {
         console.log('Listening port ' + app.get('port'));
     });
+    server.setTimeout(600000);
 })
 .catch((e) => {
     console.error(e);
