@@ -89,20 +89,20 @@ img { max-width: 640px; }
           </div>
           <div class='items'>
             {% for item in term.items %}
-                <table class="item">
-                  <tr>
-                    <td>
-                      <a href="https://next.obudget.org/i/{{item.doc_id}}">
-                        <img class='main-img' src="{{item.img}}">
-                      </a>
-                    </td>
-                    <td>
-                      <a href="https://next.obudget.org/i/{{item.doc_id}}">
-                        <img class='secondary-img' src="{{arrow_left_img}}" style='height:{{item.clip.height}}px'>
-                      </a>
-                    </td>
-                  </tr>
-              </a>
+              <table class="item">
+                <tr>
+                  <td>
+                    <a href="https://next.obudget.org/i/{{item.doc_id}}">
+                      <img class='main-img' src="{{item.img}}">
+                    </a>
+                  </td>
+                  <td>
+                    <a href="https://next.obudget.org/i/{{item.doc_id}}">
+                      <img class='secondary-img' src="{{arrow_left_img}}" style='height:{{item.clip.height}}px'>
+                    </a>
+                  </td>
+                </tr>
+              </table>
             {% endfor %}
           </div>
           {% if term.itemCount > 3 %}

@@ -13,6 +13,11 @@ let express = require('express');
 
 let browserInstance= null;
 
+let termImgCache = {};
+let headerImgCache = {};
+let itemCountImgCache = {};
+let imgCache = {};
+
 async function getBrowser() {
     if (!browserInstance) {
         console.log('Launched browser')
@@ -235,26 +240,43 @@ async function fetchTemplateImage(context, template_fn, data, key) {
 
 async function prerenderItems(context) {
     console.log(' > prerenderItems');
-    await fetchTemplateImage(context, 'partials/edit.html', context, 'edit_img');
-    await fetchTemplateImage(context, 'partials/arrow-left.html', context, 'arrow_left_img');
+    context.edit_img = imgCache['edit_img'];
+    if (!context.edit_img) {
+        await fetchTemplateImage(context, 'partials/edit.html', context, 'edit_img');
+        imgCache.edit_img = context.edit_img;
+    }
+    context.arrow_left_img = imgCache['arrow_left_img'];
+    if (!context.arrow_left_img) {
+        await fetchTemplateImage(context, 'partials/arrow-left.html', context, 'arrow_left_img');
+        imgCache.arrow_left_img = context.arrow_left_img;
+    }
     for (let section of context.sections) {
+        const sectionKey = section.header + ' ' + section.subheader;
+        section.img = headerImgCache[sectionKey];
         if (!section.img) {
             await fetchTemplateImage(context, 'partials/header.html', section, 'img');
+            headerImgCache[sectionKey] = section.img;
         }
         for (let term of section.terms) {
+            term.img = termImgCache[term.term];
             if (!term.img) {
                 await fetchTemplateImage(context, 'partials/term.html', term, 'img');
+                termImgCache[term.term] = term.img;
             }
             if (!term.items) {
                 await fetchItemImages(context, term);
             }
+            term.itemCountImg = itemCountImgCache[term.itemCount];
             if (!term.itemCountImg) {
                 await fetchTemplateImage(context, 'partials/item-count.html', term, 'itemCountImg');
+                itemCountImgCache[term.itemCount] = term.itemCountImg;
             }
         }
     }
+    context.footer = imgCache['footer'];
     if (!context.footer) {
         await fetchTemplateImage(context, 'partials/footer.html', context, 'footer');
+        imgCache.footer = context.footer;
     }
     return context;
 }
