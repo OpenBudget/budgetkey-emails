@@ -27,10 +27,9 @@ body{
 
 .section .item {
   margin: 10px 0;
-}
-
-.section .item a {
-  text-align: center;
+  width: 100%;
+  border: none;
+  border-collapse: collapse;
 }
 
 .section .items {
@@ -61,8 +60,8 @@ a {
 }
 
 img { max-width: 640px; }
-.item img:first-child { max-width: 600px; }
-.item img:nth-child(2) { 
+.item .main-img { max-width: 600px; }
+.item .secondary-img { 
   max-width: 35px; 
   object-fit: contain;
   object-position: center;
@@ -90,9 +89,19 @@ img { max-width: 640px; }
           </div>
           <div class='items'>
             {% for item in term.items %}
-              <a class="item" href="https://next.obudget.org/i/{{item.doc_id}}">
-                <img src="{{item.img}}">
-                <img src="{{arrow_left_img}}" style='height:{{item.clip.height}}px'>
+                <table class="item">
+                  <tr>
+                    <td>
+                      <a href="https://next.obudget.org/i/{{item.doc_id}}">
+                        <img class='main-img' src="{{item.img}}">
+                      </a>
+                    </td>
+                    <td>
+                      <a href="https://next.obudget.org/i/{{item.doc_id}}">
+                        <img class='secondary-img' src="{{arrow_left_img}}" style='height:{{item.clip.height}}px'>
+                      </a>
+                    </td>
+                  </tr>
               </a>
             {% endfor %}
           </div>
