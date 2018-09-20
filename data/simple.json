@@ -1,0 +1,32 @@
+{
+    "sections": [
+        {
+            "header": "מכרזים שנסגרים השבוע",
+            "subheader": "הזדמנות אחרונה להגיש הצעות ל-5 מכרזים",
+            "terms": [
+                {
+                    "term": "חלמיש",
+                    "query_url": "https://next.obudget.org/s/?q=%D7%93%D7%99%D7%95%D7%A8%20%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&range=all&dd=all"
+                },
+                {
+                    "term": "עגבניות שרי",
+                    "query_url": "https://next.obudget.org/s/?q=%D7%9E%D7%97%D7%A9%D7%91%D7%99%D7%9D&range=all&dd=tenders,contract-spending"
+                }
+            ]
+        },
+        {
+            "header": "מכרזים חדשים",
+            "subheader": "סכום כולל של 23,234,000 ₪ ב-3 מכרזים חדשים שעשויים לעניין אותך",
+            "terms": [
+                {
+                    "term": "עגבניות שרי",
+                    "query_url": "https://next.obudget.org/s/?q=%D7%9E%D7%97%D7%A9%D7%91%D7%99%D7%9D&range=all&dd=tenders,contract-spending"
+                },
+                {
+                    "term": "חלמיש",
+                    "query_url": "https://next.obudget.org/s/?q=%D7%93%D7%99%D7%95%D7%A8%20%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99&range=all&dd=all"
+                }
+            ]
+        }
+    ]
+}

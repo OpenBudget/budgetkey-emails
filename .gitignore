@@ -20,4 +20,4 @@ dist/
 .vscode
 
 out/
-data/
+__pycache__/
