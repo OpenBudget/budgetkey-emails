@@ -154,7 +154,7 @@ async function fetchItemImages(context, section) {
     console.log('   > Getting elements...');
 
     let items = await page.evaluate(() => 
-        [...document.querySelectorAll('.single-result')]
+        [...document.querySelectorAll('search-result .card')]
             .slice(0, 3)
             .map((item) => {
                 return {
