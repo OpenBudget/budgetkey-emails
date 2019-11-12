@@ -47,8 +47,4 @@ RUN chown -R pptruser:pptruser /home/pptruser
 
 USER pptruser
 
-ENV  EMAILS_AWS_ACCESS_KEY_ID=LDG2IRCOBQI7HKQZDAZI
-ENV  EMAILS_SECRET_ACCESS_KEY=0lRfoRzjFS0UFhFWpv3ECx0TPFnw0dZIO0GsZ1ehh8Q
-ENV  MAILGUN_API_KEY=key-90e203e1a6ffa6247db4357b3ee53afa
-
 ENTRYPOINT ["dumb-init", "--", "node", "index.js"]
