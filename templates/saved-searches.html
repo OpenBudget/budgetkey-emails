@@ -7,15 +7,28 @@ body{
 }
 
 .logo {
-  width: 80px; margin-bottom: 40px;
+  width: 80px; 
+  margin-bottom: 40px;
+  margin-top: 10px;
 }
 
 .hero {
   background-color: #fff;
-  padding: 20px 30px;
-  max-width: 640px;
+  padding: 20px 10px;
+  max-width: 1000px;
   margin-bottom: 50px;
-  width: 100%;
+  width: calc(100% - 20px);
+}
+
+.footer {
+  padding: 20px 10px;
+  max-width: 1000px;
+  width: calc(100% - 20px);
+  display: block;
+}
+
+.footer img {
+  max-width: 100%;
 }
 
 .section{
@@ -62,10 +75,11 @@ a {
   text-decoration: inherit; /* no underline */
 }
 
-img { max-width: 640px; }
-.item .main-img { max-width: 600px; }
+img { height:auto; }
+.item .main-img { max-width: 100%; }
 .item .secondary-img { 
   max-width: 35px; 
+  max-height: 35px;
   object-fit: contain;
   object-position: center;
 }
