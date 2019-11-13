@@ -16,7 +16,7 @@ BODY = dict(
             query_url='https://next.obudget.org/s/?q=%s&dd=budget' % urllib.parse.quote_plus('שונים')
         )]
     )],
-    email='noamoss@gmail.com'
+    email='adam.kariv@gmail.com'
 )
 
 if __name__ == '__main__':
