@@ -138,7 +138,7 @@ async function fetchItemImages(context, section) {
     const browser = await getBrowser();
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(180000);
-    await page.setViewport({width: 600, height: 3000, deviceScaleFactor: 1});
+    await page.setViewport({width: 450, height: 3000, deviceScaleFactor: 1});
     let url = section.query_url;
     console.log('   > Fetching data for', url)
 

@@ -3,7 +3,7 @@ import urllib.parse
 
 BODY = dict(
     sections=[dict(
-        header='זהו מייל נסיון',
+        header='זהו מייל נסיון עם כותרת הרבה יותר ארוכה ממקודם',
         subheader='נעם, בבקשה שלח לי כמה סקרינשוטים!',
         terms=[dict(
             term='התאמה',
