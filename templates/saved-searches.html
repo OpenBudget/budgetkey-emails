@@ -36,6 +36,11 @@ body{
   text-align: center;
 }
 
+.section .section-header {
+  max-width: 350px;
+  width: 100%;
+}
+
 .section a {
   display: inline-block;
 }
@@ -95,7 +100,7 @@ img { height:auto; }
   <div class="hero">
     {% for section in sections %}
     <center class="section">
-      <img src="{{section.img}}">
+      <img class='section-header' src="{{section.img}}">
       <div class='terms'>
         {% for term in section.terms %}
           <div class='term-header'>
