@@ -7,8 +7,9 @@ body{
 }
 
 .logo {
-  width: 80px; 
-  margin-bottom: 40px;
+  max-width: 300px;
+  width: calc(100% - 20px);
+  margin-bottom: 20px;
   margin-top: 10px;
 }
 
@@ -16,12 +17,21 @@ body{
   background-color: #fff;
   padding: 20px 10px;
   max-width: 700px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   width: calc(100% - 20px);
   text-align: center;
 }
 
+.hero.intro {
+  text-align: right;
+}
+
+.hero.intro a {
+  color: blue;
+}
+
 .footer {
+  margin-top: 20px;
   padding: 20px 10px;
   max-width: 700px;
   width: calc(100% - 20px);
@@ -94,9 +104,17 @@ img { height:auto; }
 </head>
 <body>
 <center>
-  <a href='https://next.obudget.org'>
-    <img src="http://next.obudget.org/assets/img/obudget_key@2x.png" class="logo">
-  </a>
+  <img src="https://next.obudget.org/assets/img/email-header.png" class="logo" usemap="#assets">
+  <map id="assets" name="assets">
+    <area shape="rect" coords="212,88,300,122" href="https://socialmap.org.il" alt="המפה החברתית">
+    <area shape="rect" coords="110,88,176,122" href="https://next.obudget.org/govbuy/" alt="רכש פתוח">
+    <area shape="rect" coords="0,88,72,122" href="https://socialmap.org.il/hakol-kore" alt="המפה החברתית">
+    <area shape="rect" coords="98,0,203,60" href="https://next.obudget.org" alt="מפתח התקציב">
+  </map>
+  <div class="hero intro">
+    <p>זוכר/ת שביקשת שנעדכן אותך אם קורה משהו בנושאים השמורים שלך? אז המשכנו לחפש בכל מקורות המידע שזמינים לנו ומצאנו עוד כמה דברים שקרו מאז העדכון הקודם.</p>
+    <p>את/ה תמיד יכול/ה גם <a href="https://next.obudget.org/p/">לשנות או להוסיף התראות חדשות</a> או להוסיף מידע ממשפחת אתרי "מפתח התקציב".</p>
+  </div>
   <div class="hero">
     {% for section in sections %}
     <center class="section">
