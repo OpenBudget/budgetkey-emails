@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/OpenBudget/budgetkey-emails#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.4.2",
     "aws-sdk": "^2.263.1",
     "express": "^4.16.3",
     "inline-css": "^2.4.0",
-    "mailgun-js": "^0.18.1",
     "node-watch": "^0.5.8",
     "nunjucks": "^3.1.3"
   }

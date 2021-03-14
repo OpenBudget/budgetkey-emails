@@ -6,10 +6,9 @@ let nunjucks = require('nunjucks');
 let puppeteer = require('puppeteer');
 let crypto = require('crypto');
 
-let mailgun = require("mailgun-js");
 let AWS = require('aws-sdk');
 let express = require('express');
-
+let sgMail = require('@sendgrid/mail');
 
 let browserInstance= null;
 
@@ -84,13 +83,10 @@ function storeImage(context, data) {
 }
 
 
-const mailgunApiKey = process.env['MAILGUN_API_KEY'];
+const sendgridApiKey = process.env['SENDGRID_API_KEY'];
 let sender = null;
-if (mailgunApiKey) {
-    sender = mailgun({
-        apiKey: mailgunApiKey, 
-        domain: 'obudget.org'
-    });
+if (sendgridApiKey) {
+    sgMail.setApiKey(sendgridApiKey);
 }
 async function sendEmail(context) {
     console.log(' > sendEmail');
@@ -103,12 +99,7 @@ async function sendEmail(context) {
                 subject: 'עדכונים עבורך מ״מפתח התקציב״',
                 html: context.rendered
             };
-            return new Promise((resolve) => {
-                sender.messages().send(email, function (error, body) {            
-                    console.log('MAILGUN:', body);
-                    resolve(body);
-                });            
-            })    
+            return sgMail.send(email);
         } else {
             console.log('  > nothing to send...');
             return {result: {message: 'Nothing to send, skipping'}}

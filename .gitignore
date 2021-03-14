@@ -21,3 +21,5 @@ dist/
 
 out/
 __pycache__/
+
+.secret
