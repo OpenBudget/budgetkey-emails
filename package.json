@@ -18,7 +18,7 @@
   "homepage": "https://github.com/OpenBudget/budgetkey-emails#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.2",
-    "aws-sdk": "^2.263.1",
+    "aws-sdk": "^2.814.0",
     "express": "^4.16.3",
     "inline-css": "^2.4.0",
     "node-watch": "^0.5.8",
