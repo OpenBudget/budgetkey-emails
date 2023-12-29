@@ -21,10 +21,11 @@ async function getBrowser() {
     if (!browserInstance) {
         console.log('Launched browser')
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: 'new',
             timeout: 0,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
+        browser.on('disconnected', getBrowser);
         const browserWSEndpoint = await browser.wsEndpoint();
         return puppeteer.connect({browserWSEndpoint})
             .then((connection) => {
@@ -136,7 +137,7 @@ async function fetchItemImages(context, section) {
     await page.goto(url, {
         waitUntil: 'networkidle0'
     });
-    await page.waitFor(2000);
+    await new Promise(r => setTimeout(r, 2000));
     await page.addStyleTag({content: `
     em { background: inherit !important; }
     #web-messenger-container { display: none; }
@@ -145,7 +146,7 @@ async function fetchItemImages(context, section) {
     console.log('   > Getting elements...');
 
     let items = await page.evaluate(() => 
-        [...document.querySelectorAll('search-result .card')]
+        [...document.querySelectorAll('search-result > .card')]
             .slice(0, 3)
             .map((item) => {
                 return {
@@ -207,8 +208,8 @@ async function fetchTemplateImage(context, template_fn, data, key) {
     const page = await browser.newPage();
     await page.setViewport({width: 1920, height: 1080, deviceScaleFactor: 1});
     await page.setContent(nunjucks.renderString(template, data));
-    await page.waitFor('.main');
-    await page.waitFor(1000);
+    await page.waitForSelector('.main');
+    await new Promise(r => setTimeout(r, 1000));
     let rect = await page.evaluate(() => 
         [document.querySelector('.main').getBoundingClientRect()].map((rect) => {
             return {
