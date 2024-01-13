@@ -167,15 +167,19 @@ async function fetchItemImages(context, section) {
             })
     );
     console.log('   > Got', items.length, 'items!');
-    let itemCount = await page.evaluate(() => 
-        parseInt(
-            document.querySelector('.type-text-in-search-bar-right span')
-            .textContent
-            .replace('(','')
-            .replace(')','')
-            .replace(',','')
-        )
-    );
+    let itemCount = await page.evaluate(() => {
+        const el = document.querySelector('.type-text-in-search-bar-right span');
+        if (el) {
+            const text = el.textContent || '0';
+            return parseInt(text
+                .replace('(','')
+                .replace(')','')
+                .replace(',','')
+            );
+        } else {
+            return 0;
+        }
+    });
     console.log('   > Total results count is', itemCount); 
     console.log('   > Getting screenshots...');
     const images = await Promise.all(items
