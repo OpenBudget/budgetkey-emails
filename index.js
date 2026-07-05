@@ -8,7 +8,7 @@ let crypto = require('crypto');
 
 let AWS = require('aws-sdk');
 let express = require('express');
-let sgMail = require('@sendgrid/mail');
+let nodemailer = require('nodemailer');
 
 let browserInstance= null;
 
@@ -84,11 +84,24 @@ function storeImage(context, data) {
 }
 
 
-const sendgridApiKey = process.env['SENDGRID_API_KEY'];
-let sender = null;
-if (sendgridApiKey) {
-    sgMail.setApiKey(sendgridApiKey);
+const smtpHost = process.env['SMTP_HOST'];
+const smtpPort = parseInt(process.env['SMTP_PORT'] || '587');
+const smtpUser = process.env['SMTP_USER'];
+const smtpPass = process.env['SMTP_PASS'];
+
+let transporter = null;
+if (smtpHost && smtpUser && smtpPass) {
+    transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+            user: smtpUser,
+            pass: smtpPass
+        }
+    });
 }
+
 async function sendEmail(context) {
     console.log(' > sendEmail');
     if (!context.debug) {
@@ -100,7 +113,7 @@ async function sendEmail(context) {
                 subject: 'עדכונים עבורך מ״מפתח התקציב״',
                 html: context.rendered
             };
-            return sgMail.send(email);
+            return transporter.sendMail(email);
         } else {
             console.log('  > nothing to send...');
             return {result: {message: 'Nothing to send, skipping'}}
